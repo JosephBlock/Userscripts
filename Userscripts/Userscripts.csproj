@@ -1,0 +1,118 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+        <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+        <IsPackable>false</IsPackable>
+        <SpaRoot>ClientApp\</SpaRoot>
+        <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+        <UserSecretsId>17b63387-2f94-4d95-8d61-816a97c4a39a</UserSecretsId>
+        <OutputType>Exe</OutputType>
+        <StartupObject>Userscripts.Program</StartupObject>
+        <LangVersion>9</LangVersion>
+        <SignAssembly>true</SignAssembly>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.8" />
+        <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.8" />
+        <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="3.1.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Contracts" Version="3.1.4" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Core" Version="3.1.4" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Utils" Version="3.1.4" />
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.2.2" />
+        <PackageReference Include="RestSharp" Version="106.11.7" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- Don't publish the SPA source files, but do show them in the project files list -->
+        <Content Remove="$(SpaRoot)**" />
+        <None Remove="$(SpaRoot)**" />
+        <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Data\Migrations\20200910025329_WhitelistContext.cs" />
+        <Compile Remove="Data\Migrations\20200910025329_WhitelistContext.Designer.cs" />
+        <Compile Remove="Data\Migrations\20200912232642_WLAssociation.cs" />
+        <Compile Remove="Data\Migrations\20200912232642_WLAssociation.Designer.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="ClientApp\src\components\UserscriptUpload.jsx" />
+    </ItemGroup>
+    <ItemGroup>
+      <TypeScriptCompile Remove="ClientApp\src\components\Home.tsx" />
+    </ItemGroup>
+    <ItemGroup>
+        <TypeScriptCompile Include="ClientApp\src\components\tables\UserscriptListTable.tsx" />
+        <TypeScriptCompile Include="ClientApp\src\components\UserscriptEdit.jsx" />
+        <TypeScriptCompile Include="ClientApp\src\components\UserscriptList.jsx" />
+    </ItemGroup>
+    <ItemGroup>
+        <TypeScriptCompile Include="ClientApp\src\components\UserscriptUpload.jsx" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Data\Migrations" />
+    </ItemGroup>
+
+    <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+        <!-- Ensure Node.js is installed -->
+        <Exec Command="node --version" ContinueOnError="true">
+            <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+        </Exec>
+        <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+        <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+        <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    </Target>
+
+    <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+        <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+        <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+        <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+
+        <!-- Include the newly-built files in the publish output -->
+        <ItemGroup>
+            <DistFiles Include="$(SpaRoot)build\**" />
+            <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+                <RelativePath>%(DistFiles.Identity)</RelativePath>
+                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+                <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            </ResolvedFileToPublish>
+        </ItemGroup>
+    </Target>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <TypeScriptTarget>ES2015</TypeScriptTarget>
+        <TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+        <TypeScriptModuleKind>ES6</TypeScriptModuleKind>
+        <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+        <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+        <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+        <TypeScriptOutFile />
+        <TypeScriptOutDir />
+        <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+        <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+        <TypeScriptSourceMap>True</TypeScriptSourceMap>
+        <TypeScriptMapRoot />
+        <TypeScriptSourceRoot />
+    </PropertyGroup>
+
+</Project>
