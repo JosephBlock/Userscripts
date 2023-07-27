@@ -22,7 +22,7 @@
     "react-table": "^7.5.0",
     "react-toastify": "^6.0.8",
     "reactstrap": "^8.4.1",
-    "rimraf": "^2.6.2"
+    "rimraf": "^5.0.0"
   },
   "devDependencies": {
     "@types/react": "^16.14.43",
