@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using RestSharp;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Userscripts.Models;
 
 namespace Userscripts.ApiData
@@ -16,23 +15,24 @@ namespace Userscripts.ApiData
             IConfigurationSection configurationSection =
                 configuration.GetSection("APIKeys");
             _apiKey = configurationSection["Rocks"];
-            _client = new RestClient("https://enlightened.rocks/api/user/status/")
-                {Timeout = -1, UserAgent = "Userscripts"};
+            _client = new RestClient("https://enlightened.rocks/api/user/status/");
         }
 
         public RocksUser GetAgentName(string googleId)
         {
-            RestRequest request = new RestRequest(googleId, Method.GET) {AlwaysMultipartFormData = true};
+            RestRequest request = new(googleId) {AlwaysMultipartFormData = true};
             request.AddParameter("apikey", _apiKey);
-            IRestResponse response = _client.Execute(request);
+            RestResponse response = _client.Execute(request);
             try
             {
-                return JsonConvert.DeserializeObject<RocksUser>(response.Content);
+                if (response.Content != null) return JsonConvert.DeserializeObject<RocksUser>(response.Content);
             }
             catch (System.Exception)
             {
                 return null;
             }
+
+            return null;
         }
     }
 }

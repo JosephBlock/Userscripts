@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -133,8 +130,8 @@ namespace Userscripts.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                Rocks r = new Rocks(_configuration);
-                V v = new V(_configuration);
+                Rocks r = new(_configuration);
+                V v = new(_configuration);
                 RocksUser ru = r.GetAgentName(info.ProviderKey);
                 VUser vu = v.GetAgentName(info.ProviderKey);
                 string agentName = string.Empty;
@@ -180,8 +177,7 @@ namespace Userscripts.Areas.Identity.Pages.Account
                     agentName = wli.AgentName;
                 }
 
-                ApplicationUser user = new ApplicationUser
-                    {UserName = agentName, Email = Input.Email, EmailConfirmed = true};
+                ApplicationUser user = new() {UserName = agentName, Email = Input.Email, EmailConfirmed = true};
 
                 IdentityResult result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)

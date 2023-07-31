@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Dynamic;
 using System.Linq;
 using System.Security.Claims;
@@ -8,13 +7,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Userscripts.Data;
 using Userscripts.Models;
 
@@ -84,7 +80,7 @@ namespace Userscripts.Controllers
 
         private string ApplyHeader(Userscript userscript)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             string url = HttpContext.Request.GetDisplayUrl();
             string description = Regex.Replace(userscript.Description, @"\t|\n|\r", " ");
             sb.AppendLine($"// ==UserScript==");
@@ -193,8 +189,8 @@ namespace Userscripts.Controllers
 
         private StringBuilder StripHeader(string script)
         {
-            StringBuilder sb = new StringBuilder();
-            List<string> regex = new List<string>
+            StringBuilder sb = new();
+            List<string> regex = new()
             {
                 @".*\/\/.*==UserScript==.*",
                 @".*\/\/.*@author.*",
@@ -205,7 +201,7 @@ namespace Userscripts.Controllers
                 @".*\/\/.*@description.*",
             };
             string regexString = string.Join("|", regex);
-            Regex rg = new Regex(regexString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            Regex rg = new(regexString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
             string[] lines = script.Split(
                 new[] {"\r\n", "\r", "\n"},
                 StringSplitOptions.None

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using RestSharp;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Userscripts.Models;
 
 namespace Userscripts.ApiData
@@ -17,14 +16,13 @@ namespace Userscripts.ApiData
             IConfigurationSection configurationSection =
                 configuration.GetSection("APIKeys");
             _apiKey = configurationSection["V"];
-            _client = new RestClient("https://v.enl.one")
-                { Timeout = -1, UserAgent = "Userscripts" };
+            _client = new RestClient("https://v.enl.one");
         }
 
         public VUser GetAgentName(string googleId)
         {
-            RestRequest request = new RestRequest($"/api/v1/agent/{googleId}/trust?apikey={_apiKey}", Method.GET);
-            IRestResponse response = _client.Execute(request);
+            RestRequest request = new($"/api/v1/agent/{googleId}/trust?apikey={_apiKey}");
+            RestResponse response = _client.Execute(request);
             try
             {
                 VObject vo = JsonConvert.DeserializeObject<VObject>(response.Content);

@@ -2,9 +2,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Userscripts.Data;
@@ -37,9 +34,9 @@ namespace Userscripts
             });
             services.AddMvc(options => options.OutputFormatters.Add(new JavascriptOutputFormatter()));
             services.AddDbContext<ApplicationDbContext>(options =>
-                
-                options.UseMySql(
-                    Configuration.GetConnectionString("mysql")));
+                options.UseMySql(Configuration.GetConnectionString("mysql"),
+                    ServerVersion.AutoDetect(Configuration.GetConnectionString("mysql"))
+                ));
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -62,7 +59,7 @@ namespace Userscripts
                     options.ClientId = googleAuthNSection["ClientId"];
                     options.ClientSecret = googleAuthNSection["ClientSecret"];
                 });
-            
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
         }
@@ -73,7 +70,6 @@ namespace Userscripts
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
@@ -81,6 +77,7 @@ namespace Userscripts
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseForwardedHeaders();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
