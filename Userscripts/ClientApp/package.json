@@ -20,7 +20,7 @@
     "react-syntax-highlighter": "^15.0.0",
     "react-syntax-highlighter-virtualized-renderer": "^1.1.0",
     "react-table": "^7.5.0",
-    "react-toastify": "^9.0.0",
+    "react-toastify": "^10.0.0",
     "reactstrap": "^9.0.0",
     "rimraf": "^5.0.0"
   },
